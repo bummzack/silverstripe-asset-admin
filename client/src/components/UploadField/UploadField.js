@@ -2,13 +2,14 @@ import i18n from 'i18n';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { loadComponent } from 'lib/Injector';
 import CONSTANTS from 'constants/index';
 import fieldHolder from 'components/FieldHolder/FieldHolder';
-import UploadFieldItem from 'components/UploadField/UploadFieldItem';
 import AssetDropzone from 'components/AssetDropzone/AssetDropzone';
 import InsertMediaModal from 'containers/InsertMediaModal/InsertMediaModal';
 import fileShape from 'lib/fileShape';
 import * as uploadFieldActions from 'state/uploadField/UploadFieldActions';
+const UploadFieldItem = loadComponent('UploadFieldItem');
 
 class UploadField extends Component {
   constructor(props) {
@@ -325,9 +326,11 @@ class UploadField extends Component {
   /**
    *
    * @param {object} item
+   * @param {number} index
+   *
    * @returns {object}
    */
-  renderChild(item) {
+  renderChild(item, index) {
     const itemProps = {
       // otherwise only one error file is shown and the rest are hidden due to having the same `key`
       key: item.id ? `file-${item.id}` : `queued-${item.queuedId}`,
@@ -336,7 +339,9 @@ class UploadField extends Component {
       onRemove: this.handleItemRemove,
       canEdit: this.canEdit(),
       onView: this.handleReplaceShow,
+      index
     };
+
     return <UploadFieldItem {...itemProps} />;
   }
 
