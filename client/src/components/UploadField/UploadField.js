@@ -2,14 +2,11 @@ import i18n from 'i18n';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { loadComponent } from 'lib/Injector';
+import { inject } from 'lib/Injector';
 import CONSTANTS from 'constants/index';
 import fieldHolder from 'components/FieldHolder/FieldHolder';
-import AssetDropzone from 'components/AssetDropzone/AssetDropzone';
-import InsertMediaModal from 'containers/InsertMediaModal/InsertMediaModal';
 import fileShape from 'lib/fileShape';
 import * as uploadFieldActions from 'state/uploadField/UploadFieldActions';
-const UploadFieldItem = loadComponent('UploadFieldItem');
 
 class UploadField extends Component {
   constructor(props) {
@@ -271,6 +268,7 @@ class UploadField extends Component {
     }
 
     const securityID = this.props.securityId;
+    const AssetDropzone = this.props.AssetDropzone;
 
     return (
       <AssetDropzone
@@ -307,6 +305,7 @@ class UploadField extends Component {
 
   renderDialog() {
     const { selecting, selectingItem } = this.state;
+    const InsertMediaModal = this.props.InsertMediaModal;
 
     return (
       <InsertMediaModal
@@ -342,6 +341,8 @@ class UploadField extends Component {
       index
     };
 
+    const UploadFieldItem = this.props.UploadFieldItem;
+
     return <UploadFieldItem {...itemProps} />;
   }
 
@@ -376,6 +377,9 @@ UploadField.propTypes = {
     multi: React.PropTypes.bool,
     parentid: React.PropTypes.number,
   }),
+  UploadFieldItem: React.PropTypes.oneOfType([React.PropTypes.node, React.PropTypes.func]),
+  AssetDropzone: React.PropTypes.oneOfType([React.PropTypes.node, React.PropTypes.func]),
+  InsertMediaModal: React.PropTypes.oneOfType([React.PropTypes.node, React.PropTypes.func]),
 };
 
 UploadField.defaultProps = {
@@ -410,4 +414,10 @@ const ConnectedUploadField = connect(mapStateToProps, mapDispatchToProps)(Upload
 
 export { UploadField as Component, ConnectedUploadField };
 
-export default fieldHolder(ConnectedUploadField);
+export default inject(
+  ['UploadFieldItem', 'AssetDropzone', 'InsertMediaModal'],
+  // Map to props
+  (UploadFieldItem, AssetDropzone, InsertMediaModal) => ({
+    UploadFieldItem, AssetDropzone, InsertMediaModal
+  })
+)(fieldHolder(ConnectedUploadField));
