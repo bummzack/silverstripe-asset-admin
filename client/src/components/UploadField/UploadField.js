@@ -267,12 +267,11 @@ class UploadField extends Component {
       classNames.push('uploadfield__dropzone--hidden');
     }
 
-    const securityID = this.props.securityId;
-    const AssetDropzone = this.props.AssetDropzone;
+    const { name, securityId, AssetDropzone } = this.props;
 
     return (
       <AssetDropzone
-        name={this.props.name}
+        name={name}
         canUpload={this.canEdit()}
         uploadButton={false}
         uploadSelector=".uploadfield__upload-button, .uploadfield__backdrop"
@@ -284,7 +283,7 @@ class UploadField extends Component {
         onUploadProgress={this.handleUploadProgress}
         preview={dimensions}
         options={dropzoneOptions}
-        securityID={securityID}
+        securityID={securityId}
         className={classNames.join(' ')}
       >
         <div className="uploadfield__backdrop" />
@@ -305,7 +304,7 @@ class UploadField extends Component {
 
   renderDialog() {
     const { selecting, selectingItem } = this.state;
-    const InsertMediaModal = this.props.InsertMediaModal;
+    const { InsertMediaModal } = this.props;
 
     return (
       <InsertMediaModal
@@ -330,18 +329,18 @@ class UploadField extends Component {
    * @returns {object}
    */
   renderChild(item, index) {
+    const {name, UploadFieldItem} = this.props;
+
     const itemProps = {
       // otherwise only one error file is shown and the rest are hidden due to having the same `key`
       key: item.id ? `file-${item.id}` : `queued-${item.queuedId}`,
       item,
-      name: this.props.name,
+      name,
       onRemove: this.handleItemRemove,
       canEdit: this.canEdit(),
       onView: this.handleReplaceShow,
       index
     };
-
-    const UploadFieldItem = this.props.UploadFieldItem;
 
     return <UploadFieldItem {...itemProps} />;
   }
@@ -386,6 +385,9 @@ UploadField.defaultProps = {
   value: { Files: [] },
   extraClass: '',
   className: '',
+  UploadFieldItem: null,
+  AssetDropzone: null,
+  InsertMediaModal: null,
 };
 
 function mapStateToProps(state, ownprops) {
@@ -411,13 +413,9 @@ function mapDispatchToProps(dispatch) {
 }
 
 const ConnectedUploadField = connect(mapStateToProps, mapDispatchToProps)(UploadField);
-
+const fieldHolderUploadField = fieldHolder(ConnectedUploadField);
 export { UploadField as Component, ConnectedUploadField };
 
 export default inject(
-  ['UploadFieldItem', 'AssetDropzone', 'InsertMediaModal'],
-  // Map to props
-  (UploadFieldItem, AssetDropzone, InsertMediaModal) => ({
-    UploadFieldItem, AssetDropzone, InsertMediaModal
-  })
-)(fieldHolder(ConnectedUploadField));
+  ['UploadFieldItem', 'AssetDropzone', 'InsertMediaModal']
+)(fieldHolderUploadField);
