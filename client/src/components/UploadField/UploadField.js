@@ -417,5 +417,7 @@ const fieldHolderUploadField = fieldHolder(ConnectedUploadField);
 export { UploadField as Component, ConnectedUploadField };
 
 export default inject(
-  ['UploadFieldItem', 'AssetDropzone', 'InsertMediaModal']
+  ['UploadFieldItem', 'AssetDropzone', 'InsertMediaModal'],
+  null,
+  (props) => `UploadField.${props.identifier}`
 )(fieldHolderUploadField);
